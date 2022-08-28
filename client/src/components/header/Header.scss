@@ -28,7 +28,7 @@
             .popupUser{
                 display: none;
                 text-align: center;
-                top: 20px;
+                top: 15px;
                 left: -60px;
                 z-index: 10;
                 position: absolute;
@@ -45,6 +45,35 @@
             display: block;
         }
 
+    }
+    .notification{
+        position: fixed;
+        right: 21%;
+        cursor: pointer;
+    }
+    .notification-large{
+        background-color: azure;
+        width: 22vw;
+        height: 50vh;
+        position: fixed;
+        right: 1.5%;
+        top: 9%;
+        .nf-container{
+            overflow-y: auto;
+            position: relative;
+            .nf-close{
+                position: absolute;
+                font-size: 30px;
+                font-weight: 600;
+                right: 5px;
+                cursor: pointer;
+            }            
+            .nf-item{
+                font-size: 18px;
+                border-bottom: 1px solid brown ;
+                padding: 5px 15px;
+            }
+        }
     }
 }
 .hello{

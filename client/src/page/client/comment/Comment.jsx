@@ -14,6 +14,10 @@ export const Comment = () => {
     const [transactionName, setTransactionName] = useState('')
     const [cmt, setCmt] = useState('')
     const socketRef = useRef();
+    const messageRef = useRef(null)
+    useEffect(() => {
+      messageRef.current?.scrollIntoView();
+    }, [data]);
     useEffect(() => {
       socketRef.current = socketIOClient.connect(host);
       socketRef.current.on("connect", () => {});
@@ -45,34 +49,35 @@ export const Comment = () => {
       })
     }, [transaction_id])
     const handleSubmit = async ()=>{
-      
-      socketRef.current.emit('CLIENT_SEND_COMMENT', {
-        transaction_id: transaction_id,
-        user_id: user.id,
-        comment: cmt,
-        stamp_id: 1,
-        image_id: 1,
-        image_path: user.image_path,
-        name: user.name
-      })
-      await axios.post('/api/newComment', {
-        user_id: user.id,
-        transaction_id: transaction_id,
-        comment: cmt,
-        image_id: 1,
-        stamp_id: 1
-      }).then(res=>{
-        console.log(res)
-      })
-      setData(prev=>[...prev, {
-        transaction_id,
-        comment: cmt,
-        image_id: 1,
-        image_path: user.image_path,
-        user_id: user.id,
-        name: user.name
-      }])
-      setCmt('')
+      if(cmt !== ''){
+        socketRef.current.emit('CLIENT_SEND_COMMENT', {
+          transaction_id: transaction_id,
+          user_id: user.id,
+          comment: cmt,
+          stamp_id: 1,
+          image_id: 1,
+          image_path: user.image_path,
+          name: user.name
+        })
+        await axios.post('/api/newComment', {
+          user_id: user.id,
+          transaction_id: transaction_id,
+          comment: cmt,
+          image_id: 1,
+          stamp_id: 1
+        }).then(res=>{
+          console.log(res)
+        })
+        setData(prev=>[...prev, {
+          transaction_id,
+          comment: cmt,
+          image_id: 1,
+          image_path: user.image_path,
+          user_id: user.id,
+          name: user.name
+        }])
+        setCmt('')
+      }
     }
     const onEnterPress = (e) => {
       if (e.keyCode === 13 && e.shiftKey === false) {
@@ -91,6 +96,11 @@ export const Comment = () => {
                 </div>
                 <div className="container-body">
                   <div className="body">
+                    {!data.length &&
+                    <div className="container-body__none">
+                      Nhập ý kiến của bạn để bắt đầu cuộc trò chuyện
+                    </div>
+                    }
                     {data.length && data.map((item, key)=>(
                       <div key={key} className={user.id === item.user_id ? "item item-mine" : "item"}>
                         <div className="avatar">
@@ -105,14 +115,9 @@ export const Comment = () => {
                           </div>
                         </div>
                       </div>
-                    ))
-                  }
+                    ))}
+                    <div ref={messageRef} />
                   </div>
-                  {!data.length &&
-                  <div className="container-body__none">
-                    Nhập ý kiến của bạn để bắt đầu cuộc trò chuyện
-                  </div>
-                  }
                 </div>
                 <div className="container-input">
                   <input onKeyDown={onEnterPress} onChange={(e)=>setCmt(e.target.value)} value={cmt} type="text"  placeholder='Nhập ý kiến của bạn'/>

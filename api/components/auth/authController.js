@@ -1,6 +1,4 @@
-const jwt = require('jsonwebtoken')
 const { errorResponse, successResponse } = require('../../helper/responseMessage')
-const sql = require('../../models')
 const { fetchLogin, fetchRegister} = require('./authService')
 
 async function login(req, res) {

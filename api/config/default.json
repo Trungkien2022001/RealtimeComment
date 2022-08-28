@@ -2,7 +2,7 @@
     "database":{
         "host": "localhost",
         "user": "root",
-        "database": "coffee_shop",
+        "database": "test-reatime-comment",
         "password":""
     }
 

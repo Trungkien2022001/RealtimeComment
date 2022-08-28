@@ -7,20 +7,19 @@ async function fetchLogin(req, res){
     const result = await execQuery(`select * from user where username = '${username}'`)
     if(result.length == 0) return{
         err: true,
-        message: "Username khong ton tai",
+        message: "Username không tồn tại",
     }
-    console.log(result[0].password)
     if(password == result[0].password){
         const accessToken = jwt.sign({ user: username }, "geriudfnjcweiksdv,woie3fw2efwe235@#%")
         await execQuery(`update user set token = '${accessToken}' where username = '${username}'`)
         result[0].token = accessToken
     } else return {
         err: true,
-        message: "Sai username hoac mat khau"
+        message: "Sai username hoặc mật khẩu"
     }
     return{
         err:false,
-        message:"Dang nhap thanh cong",
+        message:"Đăng nhập thành công",
         data: result,
     }
 }
@@ -32,24 +31,25 @@ async function fetchRegister(req, res){
     const email = req.body ? req.body.email : ''
     const password = req.body ? req.body.password : ''
     const address = req.body ? req.body.address : ''
+    const image_path = req.body ? req.body.image_path : ''
     let result = await execQuery(`select * from user where username = '${username}'`)
     if(result.length > 0) return{
         err: true,
-        message: " Da ton tai username"
+        message: "Đã tồn tại username"
     }
     result = await execQuery(`select * from user where email = '${email}'`)
     if(result.length > 0) return{
         err: true,
-        message: " Da ton tai email"
+        message: "Đã tồn tại email"
     }
-    result = await execQuery(`insert into user (name, username, password, phone, email, address) value('${name}', '${username}','${password}','${phone}','${email}','${address}')`)
+    result = await execQuery(`insert into user (name, username, password, phone, email, address, image_path) value('${name}', '${username}','${password}','${phone}','${email}','${address}', '${image_path}')`)
     if(!result) return{
         err: true,
-        message: " Co loi"
+        message: "Có lỗi"
     }
     return {
         err: false,
-        message: "Dang ky tai khoan thanh cong"
+        message: "Đăng ký tài khoản thành công"
     }
 }
 module.exports ={
