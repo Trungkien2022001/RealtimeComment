@@ -5,6 +5,7 @@ import { Homepage } from './page/client/home/Homepage';
 import { Register } from './page/client/register/Register';
 import { NotFound } from './components/notFound/NotFound';
 import { Login } from './page/client/login/Login';
+import { Comment } from './page/client/comment/Comment';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path='/' element = {<Homepage/>}/>
           <Route path='/login' element = {<Login/>}/>
           <Route path='/register' element = {<Register/>}/>
+          <Route path='/comment/:id' element = {<Comment/>}/>
           <Route path='*' element = {<NotFound/>}/>
         </Routes>
       </BrowserRouter>

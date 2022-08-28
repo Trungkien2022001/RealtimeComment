@@ -10,7 +10,8 @@ export const userSlice = createSlice({
         email:null,
         address: null,
         token:null,
-        name:'Guest'
+        name:'Guest',
+        image_path: ''
     },
     reducers:{
         login:(state, action)=>{
@@ -22,6 +23,7 @@ export const userSlice = createSlice({
             state.phone = action.payload.phone
             state.email = action.payload.email
             state.adress = action.payload.adress
+            state.image_path = action.payload.image_path
         },
         logout:(state, action)=>{
             state.id = null
@@ -32,6 +34,7 @@ export const userSlice = createSlice({
             state.phone =null
             state.email =null
             state.address =null
+            state.image_path =''
         }
     } 
 })

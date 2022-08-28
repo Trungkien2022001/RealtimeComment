@@ -1,0 +1,77 @@
+.container{
+    .container-name{
+        position: relative;
+        text-align: center;
+        font-size: 30px;
+        font-weight: 600;
+        .close{
+            position: absolute;
+            top: 10px;
+            font-size: 20px;
+            text-decoration: underline;
+            font-weight: normal;
+            cursor: pointer;
+        }
+    }
+    .container-body{
+        height: 79vh;
+        overflow-y: auto;
+        .container-body__none{
+            height: 100%;
+            font-size: 35px;
+            opacity: 0.6;
+            text-align: center;
+            margin-top: 200px;
+        }
+        .body{
+            height: 100%;
+            // border: 1px solid red;
+            // padding: auto;
+            .item{
+                display: flex;
+                // justify-content: flex-start;
+                padding: 5px 10px;
+                .avatar{
+                    img{
+                        height: 80px;
+                        width:auto;
+                        max-width: 70px;
+                    }
+                }
+                .chat{
+                    margin-left: 15px;
+                    .name{
+                        font-size: 25px;
+                        font-weight: 650;
+
+                    }
+                    .comment{
+                        font-size: 20px;
+                    }
+                }
+            }
+            .item-mine {
+                flex-direction: row-reverse;
+                .chat{
+                    margin-right: 15px;
+                    .name{
+                       text-align: end;
+
+                    }
+                }
+            }
+        }
+    }
+    .container-input{
+        input{
+            // height: 25px;
+            width: 90%;
+            font-size: 20px;
+        }
+        button{
+            // height: 20px;
+            // width:50px;
+            font-size: 20px;
+        }
+    }
+}

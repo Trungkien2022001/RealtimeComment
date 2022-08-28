@@ -1,0 +1,60 @@
+.container{
+    padding: 10px 20px;
+    .header{
+        font-size: 40px;
+        margin-bottom: 30px;
+    }
+    .homepage-container__item{
+        font-size: 30px;
+        padding: 10px 40px;
+        border-bottom: 1px solid rebeccapurple;
+    }
+    .homepage-container__item:first-child {
+        border-top: 1px solid rebeccapurple;
+      }
+    .homepage-container__item:hover{
+        cursor: pointer;
+    }
+    .homepage-container_add{
+        margin-top: 40px;
+        padding: 10px 20px;
+        font-size: 30px;
+        cursor: pointer;
+    }
+    .homepage-container_add:hover{
+        cursor: pointer;
+    }
+    .homepage-add{
+        position: relative;
+        padding: 10px 30px;
+        .add-item{
+            .add-header{
+                font-size: 25px;
+                input{
+                    font-size: 25px;
+                    border: none;
+                    background-color: beige;
+                }
+            }
+            .add-submit{
+                margin-top: 20px;
+                button{
+                    border: none;
+                    cursor: pointer;
+                    width: 100px;
+                    height: 30px;
+                    font-size: 25px;
+                    background-color: aquamarine;
+                    border-radius: 10px;
+                }
+            }
+            .add-close{
+                position: absolute;
+                top: 0px;
+                right: 20px;
+                font-size: 35px;
+                cursor: pointer;
+            }
+        }
+    }
+}
