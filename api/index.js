@@ -17,12 +17,15 @@ app.use(express.json())
 app.use(cors())
 app.use('/auth', authRoute)
 app.use('/api', commentRoute)
-let notification_room = [] //Chứa thông tin các room để thông báo khi có cmt mới
+
+let room = [] //CHỨA THÔNG TIN VỀ CÁC ROOM, ID, SOCKET_ID CỦA USER 
+
 socketIo.on("connection", (socket) =>{
     // console.log("new client connected on socketID:" , socket.id)
 
-    //Comment
+    //SOCKER PHẦN COMMENT
     socket.on('ADD_CLIENT_TO_ROOM', (data)=>{
+        socket.join(data.transaction_id)
         // tạo room, thêm, sửa, xóa room
         // const transaction_index = room.findIndex(item =>item.transaction_id === data.transaction_id)
         // if(transaction_index === -1){
@@ -45,63 +48,60 @@ socketIo.on("connection", (socket) =>{
         //         room[transaction_index].member[user_index].socket_id = id
         //     }
         // }
-        socket.join(data.transaction_id)
-        // console.log(`client ${data.user_id} joins to room ${data.transaction_id}`);
-        // // room.map(item =>console.log(item))
     })
     socket.on('CLIENT_SEND_COMMENT', (data)=>{
-        // console.log(data);
+        
         socket.to(data.transaction_id).emit('SERVER_SEND_COMMENT', data)
         const notif_room = 'notif'+ data.transaction_id
+
+        //NẾU CLIENT COMMENT VÀO MỘT PHÒNG CHƯA TỪNG COMMENT TRƯỚC ĐÓ, THÌ THÊM CLIENT VÀO ROOM MỚI ĐỂ LẮNG NGHE
+        let index = room.findIndex(i=>i.user_id == data.user_id)
+        if(index !== -1){
+            const room_index = room[index].room_id.findIndex(item=>item===notif_room)
+            if(room_index === -1 ) {
+                room[index].room_id.push(notif_room)
+                const room_arr = room[index].room_id
+                socket.join(room_arr)
+            }
+            // console.log("gr", room[index].room_id);
+        }
+
+        //BẮN TẤT CẢ NHỮNG THÔNG BÁO CHO NHỮNG THẰNG COMMENT BÀI VIẾT KIA
         socket.to(notif_room).emit('NEW COMMENT', data)
     })
 
-
-    //Notification
-    // socket.on('ADD_CLIENT_TO_NOTIF_ROOM', (data)=>{
-    //     // console.log(data)
-    //     if(data.room.length != 0){
-    //         for(i in data.room){
-    //             let room_index = notification_room.findIndex(item=>item.notif_room == 'notif'+data.room[i]?.transaction_id)
-    //             if(room_index == -1) {
-    //                 notification_room.push({
-    //                     notif_room: 'notif'+data.room[i].transaction_id,
-    //                     user_arr: [{
-    //                         user_id: data.user_id,
-    //                         socket_id: socket.id
-    //                     }]
-    //                 })
-    //             }
-    //             else{
-    //                 let user_index = notification_room[room_index].user_arr.findIndex(item => item.user_id == data.user_id)
-    //                 if(user_index == -1){
-    //                     notification_room[room_index].user_arr.push({
-    //                         user_id: data.user_id,
-    //                         socket_id: socket.id
-    //                     })
-    //                 } else{
-    //                     notification_room[room_index].user_arr[user_index].socket_id = socket.id
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     //  console.log(notification_room)
-    //     console.log('all room sau khi ket noi: ',notification_room)
-
-    // })
-
-        // Notification
+    // NOTIFICATION
     socket.on('ADD_CLIENT_TO_NOTIF_ROOM', (data)=>{
-        let room_arr = []
-        for(i of data.room){
-            room_arr.push('notif'+i.transaction_id)
+        let user_index = room.findIndex(i=>i.user_id === data.user_id)
+        if(user_index === -1){
+            let room_arr = []
+            for(i of data.room){
+                room_arr.push('notif'+i.transaction_id)
+            }
+            socket.join(room_arr)
+            room.push({
+                user_id: data.user_id,
+                room_id: room_arr,
+                socket_id: socket.id
+            })
         }
-        socket.join(room_arr)
+        else {
+            let room_arr = []
+            for(i of data.room){
+                room_arr.push('notif'+i.transaction_id)
+            }
+            room[user_index].room_id = room_arr
+            room[user_index].socket_id = socket.id
+            socket.join(room_arr)
+        }
     })
     socket.on('disconnect', ()=>{
+        //XÓA CLIENT KHỎI ARRAY
+        const user_index = room.findIndex(i=>i.socket_id===socket.id)
+        if(user_index !== -1){
+            room.splice(user_index, 1)
+        }
         // console.log("disconnected by socketId:", socket.id)
-        // deletedById(socket.id)
-        // console.log('all room sau khi mot thang ngat ket noi: ',notification_room)
     })
 
 })

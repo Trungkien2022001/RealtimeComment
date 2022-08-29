@@ -59,7 +59,7 @@ export const Header = () => {
   const handleOpenNotif = async () => {
     const user_id = user.id || 0
     const result = await axios.get(`/api/notification?user_id=${user_id}`)
-    console.log(result.data.data)
+    // console.log(result.data.data)
     setData(result.data.data)
     setCheck(!check)
   }
