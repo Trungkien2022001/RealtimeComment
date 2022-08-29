@@ -15,6 +15,7 @@ export const Comment = () => {
     const [cmt, setCmt] = useState('')
     const socketRef = useRef();
     const messageRef = useRef(null)
+    // const [room, setRoom]= useState([])
     useEffect(() => {
       messageRef.current?.scrollIntoView();
     }, [data]);
@@ -25,6 +26,9 @@ export const Comment = () => {
         transaction_id,
         user_id: user.id,   
       })
+      // socketRef.current.emit("ADD_CURRENT_USER_TO_NEW_ROOM", ()=>{
+
+      // })
       socketRef.current.on('SERVER_SEND_COMMENT', (data)=>{
         // console.log(data);
         setData(prev =>[...prev, {
@@ -50,33 +54,39 @@ export const Comment = () => {
     }, [transaction_id])
     const handleSubmit = async ()=>{
       if(cmt !== ''){
-        socketRef.current.emit('CLIENT_SEND_COMMENT', {
-          transaction_id: transaction_id,
-          user_id: user.id,
-          comment: cmt,
-          stamp_id: 1,
-          image_id: 1,
-          image_path: user.image_path,
-          name: user.name
-        })
-        await axios.post('/api/newComment', {
-          user_id: user.id,
-          transaction_id: transaction_id,
-          comment: cmt,
-          image_id: 1,
-          stamp_id: 1
-        }).then(res=>{
-          // console.log(res)
-        })
-        setData(prev=>[...prev, {
-          transaction_id,
-          comment: cmt,
-          image_id: 1,
-          image_path: user.image_path,
-          user_id: user.id,
-          name: user.name
-        }])
-        setCmt('')
+        if(user.id){
+          socketRef.current.emit('CLIENT_SEND_COMMENT', {
+            transaction_id: transaction_id,
+            user_id: user.id,
+            comment: cmt,
+            stamp_id: 1,
+            image_id: 1,
+            image_path: user.image_path,
+            name: user.name
+          })
+          await axios.post('/api/newComment', {
+            user_id: user.id,
+            transaction_id: transaction_id,
+            comment: cmt,
+            image_id: 1,
+            stamp_id: 1
+          }).then(res=>{
+            // console.log(res)
+          })
+          setData(prev=>[...prev, {
+            transaction_id,
+            comment: cmt,
+            image_id: 1,
+            image_path: user.image_path,
+            user_id: user.id,
+            name: user.name
+          }])
+          setCmt('')
+        }
+        else {
+          alert('Vui lòng đăng nhập hoặc đăng ký để có thể bình luận')
+          setCmt('')
+        }
       }
     }
     const onEnterPress = (e) => {

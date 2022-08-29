@@ -5,16 +5,16 @@ import { useState } from "react";
 import { Header } from "../../../components/header/Header";
 import { Link } from "react-router-dom";
 import './Homepage.scss'
+import { useSelector } from "react-redux";
 // import socketIOClient from "socket.io-client";
 // import { useRef } from "react";
-// import { useSelector } from "react-redux";
 // const host = "http://localhost:2000";
 
 export const Homepage = () => {
   const [data, setData] = useState([])
   const [newChat, setNewChat] = useState('')
   const [check, setCheck] = useState(true)
-  // const currentUser = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
   // const socketRef = useRef();
   // useEffect(() => {
   //   console.log("Hello");
@@ -30,13 +30,18 @@ export const Homepage = () => {
     })
   }, [])
   const handleSubmit = async ()=>{
-    await axios.post('/api/newTransaction', {name: newChat}).then(res=>{
-      setData(prev=>[...prev, {
-        id: res.data.data.transaction_id,
-        name: newChat,
-      }])
-      setCheck(!check)
-    })
+    if(user.id){
+      await axios.post('/api/newTransaction', {name: newChat}).then(res=>{
+        setData(prev=>[...prev, {
+          id: res.data.data.transaction_id,
+          name: newChat,
+        }])
+        setCheck(!check)
+      })
+    }
+    else {
+      alert("Vui Lòng đăng nhập để có thể sử dụng tính năng này")
+    }
   }
   const onEnterPress = (e) => {
     if (e.keyCode === 13 && e.shiftKey === false) {

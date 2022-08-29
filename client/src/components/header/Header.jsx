@@ -44,8 +44,7 @@ export const Header = () => {
         // console.log(data)
         if(data.user_id !== user.id){
           toast(`${data.name} đã bình luận về một topic mà bạn từng comment trước đó`)
-        }
-        
+        }    
       })
       return () => {
         socketRef.current.disconnect();
