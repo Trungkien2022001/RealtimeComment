@@ -2,15 +2,18 @@ import React, { useEffect } from "react";
 import "./Header.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping, faUser } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userSlice } from "../../redux/userSlice";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import { useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import socketIOClient from "socket.io-client";
 import { useRef } from "react";
 const host = "http://localhost:2000";
+
 
 export const Header = () => {
   const dispatch = useDispatch()
@@ -18,6 +21,7 @@ export const Header = () => {
   const [check, setCheck] = useState(true)
   const [data, setData] = useState([])
   const [room, setRoom] = useState([])
+  const navigate = useNavigate()
   const socketRef = useRef();
   useEffect(()=>{
     if(user.id){
@@ -32,10 +36,16 @@ export const Header = () => {
     if(user.id){
       socketRef.current = socketIOClient.connect(host);
       socketRef.current.on("connect", () => {});
-      console.log(room);
       socketRef.current.emit("ADD_CLIENT_TO_NOTIF_ROOM", {
         user_id: user.id,   
         room: room
+      })
+      socketRef.current.on('NEW COMMENT', (data)=>{
+        // console.log(data)
+        if(data.user_id !== user.id){
+          toast(`${data.name} đã bình luận về một topic mà bạn từng comment trước đó`)
+        }
+        
       })
       return () => {
         socketRef.current.disconnect();
@@ -54,32 +64,14 @@ export const Header = () => {
     setData(result.data.data)
     setCheck(!check)
   }
+  const handleSubmit = (item)=>{
+    // console.log(item)
+    navigate(`/comment/${item.transaction_id}`)
+  }
   return (
     <div className="header-container">
-      {check ?
-        <div onClick={handleOpenNotif} className="notification">
-          <NotificationsNoneIcon />
-        </div>
-        :
-        <div className="notification-large">
-          <div className="nf-container">
-            <div onClick={() => setCheck(!check)} className="nf-close">X</div>
-            {data.length ?
-              <div className="notif-container">
-                  {data.map((item, key)=>(
-                    <div key={key} className="nf-item">
-                      {item.other_name} đã bình luận một topic mà bạn đang theo dõi (Topic: {item.name})
-                    </div>
-                ))}
-              </div>
-            :
-                <div className="nf-item">
-                  Bạn không có thông báo nào
-                </div>
-            }
-          </div>
-        </div>
-      }
+      <ToastContainer/>
+      
       <Link style={{ color: "black", textDecoration: "none" }} to={"/"}>
         <div className="name">BK COFFEE</div>
       </Link>
@@ -101,7 +93,30 @@ export const Header = () => {
       </div>
 
       <div className="btn">
-
+        {check ?
+          <div onClick={handleOpenNotif} className="notification">
+            <NotificationsNoneIcon />
+          </div>
+          :
+          <div className="notification-large">
+            <div className="nf-container">
+              <div onClick={() => setCheck(!check)} className="nf-close">X</div>
+              {data.length ?
+                <div className="notif-container">
+                    {data.map((item, key)=>(
+                      <div onClick={()=>handleSubmit(item)} key={key} className="nf-item">
+                        {item.other_name} đã bình luận một topic mà bạn đang theo dõi (Topic: {item.name})
+                      </div>
+                  ))}
+                </div>
+              :
+                  <div className="nf-item">
+                    Bạn không có thông báo nào
+                  </div>
+              }
+            </div>
+          </div>
+        }
         {user.name === 'Guest' ? (
           <Link style={{ color: "black", marginRight: "20px" }} to="/login">
             <div className="cartBtn">

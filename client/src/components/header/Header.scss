@@ -20,6 +20,7 @@
     }
     .btn{
         justify-content: center;
+        position: relative;
         flex: 1;
         display: flex;
         .cartBtn{
@@ -47,8 +48,9 @@
 
     }
     .notification{
-        position: fixed;
-        right: 21%;
+        position: absolute;
+        right: 71%;
+        top: -3px;
         cursor: pointer;
     }
     .notification-large{
@@ -72,6 +74,7 @@
                 font-size: 18px;
                 border-bottom: 1px solid brown ;
                 padding: 5px 15px;
+                cursor: pointer;
             }
         }
     }

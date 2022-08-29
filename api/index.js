@@ -52,53 +52,68 @@ socketIo.on("connection", (socket) =>{
     socket.on('CLIENT_SEND_COMMENT', (data)=>{
         // console.log(data);
         socket.to(data.transaction_id).emit('SERVER_SEND_COMMENT', data)
+        const notif_room = 'notif'+ data.transaction_id
+        socket.to(notif_room).emit('NEW COMMENT', data)
     })
 
 
     //Notification
+    // socket.on('ADD_CLIENT_TO_NOTIF_ROOM', (data)=>{
+    //     // console.log(data)
+    //     if(data.room.length != 0){
+    //         for(i in data.room){
+    //             let room_index = notification_room.findIndex(item=>item.notif_room == 'notif'+data.room[i]?.transaction_id)
+    //             if(room_index == -1) {
+    //                 notification_room.push({
+    //                     notif_room: 'notif'+data.room[i].transaction_id,
+    //                     user_arr: [{
+    //                         user_id: data.user_id,
+    //                         socket_id: socket.id
+    //                     }]
+    //                 })
+    //             }
+    //             else{
+    //                 let user_index = notification_room[room_index].user_arr.findIndex(item => item.user_id == data.user_id)
+    //                 if(user_index == -1){
+    //                     notification_room[room_index].user_arr.push({
+    //                         user_id: data.user_id,
+    //                         socket_id: socket.id
+    //                     })
+    //                 } else{
+    //                     notification_room[room_index].user_arr[user_index].socket_id = socket.id
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     //  console.log(notification_room)
+    //     console.log('all room sau khi ket noi: ',notification_room)
+
+    // })
+
+        // Notification
     socket.on('ADD_CLIENT_TO_NOTIF_ROOM', (data)=>{
-        if(data.room.length != 0){
-            for(i in data.room){
-                let room_index = notification_room.findIndex(item=>item.notif_room == 'notif'+data.room[i]?.transaction_id)
-                if(room_index == -1) {
-                    notification_room.push({
-                        notif_room: 'notif'+data.room[i].transaction_id,
-                        user_arr: [{
-                            user_id: data.user_id,
-                            socket_id: socket.id
-                        }]
-                    })
-                }
-                else{
-                    let user_index = notification_room[room_index].user_arr.findIndex(item => item.user_id == data.user_id)
-                    if(user_index == -1){
-                        notification_room[room_index].user_arr.push({
-                            user_id: data.user_id,
-                            socket_id: socket.id
-                        })
-                    } else{
-                        notification_room[room_index].user_arr[user_index].socket_id = socket.id
-                    }
-                }
-            }
+        let room_arr = []
+        for(i of data.room){
+            room_arr.push('notif'+i.transaction_id)
         }
-        notification_room.map(i=>console.log(i))
+        socket.join(room_arr)
     })
     socket.on('disconnect', ()=>{
         // console.log("disconnected by socketId:", socket.id)
         // deletedById(socket.id)
+        // console.log('all room sau khi mot thang ngat ket noi: ',notification_room)
     })
 
 })
 
 const deletedById = (id) =>{
-    for (const i in room) {
-        let index = room[i].member.findIndex(i =>i.socket_id === id)
+    for (const i of notification_room) {
+        let index = i.user_arr.findIndex(item =>item.socket_id === id)
         if(index !== -1){
-            if(room[i].member.length === 1) {
-                room.splice(i, 1)
+            if(i.user_arr.length === 1) {
+                notification_room.splice(notification_room.findIndex(item=>item == i), 1)
             } else {
-                room[i].member.splice(index, 1)
+                i.user_arr.splice(index, 1)
             }
         } 
     }

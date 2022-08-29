@@ -26,7 +26,7 @@ export const Comment = () => {
         user_id: user.id,   
       })
       socketRef.current.on('SERVER_SEND_COMMENT', (data)=>{
-        console.log(data);
+        // console.log(data);
         setData(prev =>[...prev, {
           transaction_id: data.transaction_id,
           user_id: data.user_id,
@@ -66,7 +66,7 @@ export const Comment = () => {
           image_id: 1,
           stamp_id: 1
         }).then(res=>{
-          console.log(res)
+          // console.log(res)
         })
         setData(prev=>[...prev, {
           transaction_id,
@@ -89,7 +89,7 @@ export const Comment = () => {
             <Header/>
             <div className="container">
                 <div className="container-name">
-                  {transactionName}
+                  Topic: {transactionName}
                   <Link style={{color: "black"}} to={'../'}>
                     <div className="close">Quay lại</div>
                   </Link>
@@ -121,7 +121,7 @@ export const Comment = () => {
                 </div>
                 <div className="container-input">
                   <input onKeyDown={onEnterPress} onChange={(e)=>setCmt(e.target.value)} value={cmt} type="text"  placeholder='Nhập ý kiến của bạn'/>
-                  <button onClick={()=>handleSubmit}>Gửi</button>
+                  <button onClick={handleSubmit}>Gửi</button>
                 </div>
             </div>
         </div>
